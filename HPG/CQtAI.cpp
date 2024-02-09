@@ -1,7 +1,7 @@
 /*************************************************************
 
     程序名称:基于Qt线程类的AI类
-    程序版本:REV 0.1
+    程序版本:REV 0.2
     创建日期:20240117
     设计编写:rainhenry
     作者邮箱:rainhenry@savelife-tech.com
@@ -10,6 +10,7 @@
 
     版本修订
         REV 0.1   20240117      rainhenry    创建文档
+        REV 0.2   20240209      rainhenry    修复c_str()返回空指针问题
 
 *************************************************************/
 
@@ -79,7 +80,7 @@ void CQtAI::run()
         double now_confid_th = this->confid_th;
         bool now_low_flag = this->confid_low_flag;
         CPyAI::EModeType now_type = this->mode_type;
-        const char* now_prompt = this->sd_prompt.toStdString().c_str();
+        std::string tmp_str = this->sd_prompt.toStdString();
         cmd_mutex.unlock();
 
         //  当为空命令
@@ -206,7 +207,7 @@ void CQtAI::run()
             //  执行SD
             QElapsedTimer run_time;
             run_time.start();
-            CPyAI::SSDdata sd_dat = py_ocr->SD_Ex(now_prompt);
+            CPyAI::SSDdata sd_dat = py_ocr->SD_Ex(tmp_str.c_str());
             qint64 run_time_ns = run_time.nsecsElapsed();
 
             //  构造输出图像
