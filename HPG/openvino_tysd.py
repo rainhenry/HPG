@@ -17,14 +17,17 @@ from optimum.intel.openvino import OVStableDiffusionPipeline
 import numpy as np
 from PIL import Image
 import time
+import gc
 
 def sd_init(model_id):
+    gc.disable()
     pipe = OVStableDiffusionPipeline.from_pretrained(model_id, export=True, compile=False)
     pipe.to("cpu")
     pipe.compile()
     return pipe
 
 def sd_ex(prompt, pipe):
+    gc.disable()
     ##  标准512x512尺寸
     image = pipe(prompt, guidance_scale=10).images[0]  
     image.save('tmp.jpg')
